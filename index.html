@@ -1,0 +1,743 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Typing Test</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007acc;
+            --accent: #ffd700;
+            --accent2: #36c7fa;
+            --danger: #ff4757;
+            --surface: #1e2746;
+            --input-bg: #2a3652;
+            --input-border: #3a4662;
+            --text-secondary: #8c9db5;
+            --box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+            --primary-glow: rgba(0, 122, 204, 0.3);
+            --glass-bg: rgba(46, 54, 82, 0.8);
+            --loader: #36c7fa;
+        }
+
+        body.light {
+            --surface: #ffffff;
+            --input-bg: #f8f9fa;
+            --input-border: #e9ecef;
+            --text-secondary: #6c757d;
+            --primary: #0056b3;
+            background: #f8f9fa;
+            color: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: #191d30;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        /* Header Styles */
+        header {
+            background: #131741;
+            border-bottom: 1px solid #2a3652;
+            padding: 0;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+        }
+
+        .logo img {
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        .mode-toggle {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        /* Main Container */
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Timer Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .controls button {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 12px;
+            border: 2px solid var(--accent);
+            background: var(--surface);
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .controls button.active,
+        .controls button:hover {
+            background: var(--accent);
+            color: #191d30;
+        }
+
+        .controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Typing Container */
+        .typing-container {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .visual-timer {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-family: 'Courier New', monospace;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid var(--accent);
+        }
+
+        .start-msg, .end-msg {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        .end-msg {
+            color: var(--accent);
+            background: rgba(255, 215, 0, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .typing-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin: 2rem 0;
+            text-align: justify;
+            min-height: 150px;
+        }
+
+        .typing-text span {
+            position: relative;
+        }
+
+        .typing-text span.active {
+            background: var(--accent);
+            color: #191d30;
+            border-radius: 3px;
+            animation: blink 1s infinite;
+        }
+
+        .typing-text span.correct {
+            color: #5cf4a2;
+            background: rgba(92, 244, 162, 0.1);
+            border-radius: 3px;
+        }
+
+        .typing-text span.incorrect {
+            color: var(--danger);
+            background: rgba(255, 71, 87, 0.2);
+            border-radius: 3px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(54, 199, 250, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(54, 199, 250, 0.3);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .try-again-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: block;
+            margin: 2rem auto 0;
+            transition: all 0.2s;
+        }
+
+        .try-again-btn:hover {
+            background: var(--accent);
+            color: #191d30;
+            transform: translateY(-2px);
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .lds-ring {
+            display: inline-block;
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+
+        .lds-ring div {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            margin: 6px;
+            border: 5px solid var(--loader);
+            border-radius: 50%;
+            animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            border-color: var(--loader) transparent transparent transparent;
+        }
+
+        .lds-ring div:nth-child(1) { animation-delay: -0.45s; }
+        .lds-ring div:nth-child(2) { animation-delay: -0.3s; }
+        .lds-ring div:nth-child(3) { animation-delay: -0.15s; }
+
+        @keyframes lds-ring {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .language-selector select {
+            background: var(--surface);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .typing-container {
+                padding: 1rem;
+            }
+            
+            .visual-timer {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding: 1rem;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <div class="logo">
+                <a href="index.html"><img src="logo-png.png" alt="Typing Test"></a>
+            </div>
+            <nav>
+                <div class="language-selector">
+                    <select id="lang-select">
+                        <option value="en">🇺🇸 English</option>
+                        <option value="es">🇪🇸 Spanish</option>
+                        <option value="fr">🇫🇷 French</option>
+                        <option value="de">🇩🇪 German</option>
+                        <option value="ig">NG Igbo</option>
+                    </select>
+                </div>
+                <a href="about.html">About</a>
+                <a href="/Leaderboard/leaderboard.html">Leaderboard</a>
+                <!-- <a href="#settings">Settings</a> -->
+                <button class="mode-toggle" id="modeToggle" title="Toggle theme">🌙</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="controls">
+            <button data-time="30" data-unit="seconds">30s</button>
+            <button data-time="60" data-unit="seconds" class="active">1m</button>
+            <button data-time="120" data-unit="seconds">2m</button>
+            <button data-time="300" data-unit="seconds">5m</button>
+            <button data-time="600" data-unit="seconds">10m</button>
+            <button id="resetButton">Reset</button>
+        </div>
+
+        <div class="typing-container" id="typingContainer" tabindex="0">
+            <div class="visual-timer" id="visualTimer">01:00</div>
+            
+            <div class="start-msg" id="startMsg">Click here or start typing to begin!</div>
+            <div class="end-msg" id="endMsg"></div>
+            
+            <div class="typing-text" id="typingText"></div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">Time Left</div>
+                    <div class="stat-value" id="timeLeft">01:00</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Mistakes</div>
+                    <div class="stat-value" id="mistakes">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">WPM</div>
+                    <div class="stat-value" id="wpm">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">CPM</div>
+                    <div class="stat-value" id="cpm">0</div>
+                </div>
+            </div>
+            
+            <button class="try-again-btn" id="tryAgainBtn">Try Again</button>
+            
+            <div class="loader" id="loader">
+                <div class="lds-ring">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    
+
+    <script type="module">
+        const LECTO_API_KEY = "HQV0Q3X-HSZ4MA8-H78HQCX-QXWANF9";
+        const LECTO_ENDPOINT = "https://api.lecto.ai/v1/translate/text";
+        // Sample paragraphs for typing test
+        const TYPING_PARAGRAPHS = [
+            "The quick brown fox jumps over the lazy dog. This pangram contains every letter of the alphabet and is commonly used for typing practice. It helps improve speed and accuracy while ensuring all keys are tested.",
+            "Technology has revolutionized the way we communicate and work. From instant messaging to video conferences, digital tools have made collaboration easier than ever before. Learning to type efficiently is essential in today's digital world.",
+            "Practice makes perfect when it comes to typing skills. Regular exercise helps build muscle memory and increases speed over time. Focus on accuracy first, then gradually work on improving your words per minute.",
+            "The art of writing has evolved significantly with the advent of computers. Touch typing allows writers to focus on their thoughts rather than hunting for keys. This skill becomes invaluable for students, professionals, and anyone who works with text.",
+            "In the modern workplace, typing speed and accuracy can significantly impact productivity. Many jobs require extensive computer use, making touch typing an essential skill. The investment in learning proper technique pays dividends throughout one's career."
+        ];
+        async function translateViaLecto(textArr, to, from = "en") {
+    if (to === "en") return [...textArr]; // No translation needed
+    try {
+        const resp = await fetch(LECTO_ENDPOINT, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-API-Key": LECTO_API_KEY,
+            },
+            body: JSON.stringify({ texts: textArr, to: [to], from }),
+        });
+        if (!resp.ok) throw new Error("API error " + resp.status);
+        const data = await resp.json();
+        return data.translations[0].translated || [...textArr];
+    } catch (err) {
+        console.error("Translation API failed:", err);
+        return [...textArr];
+    }
+}
+
+
+        // Application state
+        let maxTime = 60;
+        let timeLeft = maxTime;
+        let timer = null;
+        let charIndex = 0;
+        let mistakes = 0;
+        let isTyping = false;
+        let finished = false;
+        let currentText = "";
+        let currentChars = [];
+
+        // DOM elements
+        const langSelect = document.getElementById('lang-select');
+        const modeToggle = document.getElementById('modeToggle');
+        const typingContainer = document.getElementById('typingContainer');
+        const visualTimer = document.getElementById('visualTimer');
+        const timeLeftSpan = document.getElementById('timeLeft');
+        const startMsg = document.getElementById('startMsg');
+        const endMsg = document.getElementById('endMsg');
+        const typingText = document.getElementById('typingText');
+        const mistakesSpan = document.getElementById('mistakes');
+        const wpmSpan = document.getElementById('wpm');
+        const cpmSpan = document.getElementById('cpm');
+        const tryAgainBtn = document.getElementById('tryAgainBtn');
+        const resetButton = document.getElementById('resetButton');
+        const loader = document.getElementById('loader');
+
+        // Utility functions
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function randomParagraph() {
+            const randomIndex = Math.floor(Math.random() * TYPING_PARAGRAPHS.length);
+            return TYPING_PARAGRAPHS[randomIndex];
+        }
+
+        function showLoader() {
+            loader.style.display = 'flex';
+            typingText.style.display = 'none';
+        }
+
+        function hideLoader() {
+            loader.style.display = 'none';
+            typingText.style.display = 'block';
+        }
+
+        function updateTimers() {
+            const timeStr = formatTime(timeLeft);
+            visualTimer.textContent = timeStr;
+            timeLeftSpan.textContent = timeStr;
+        }
+
+        function updateStats() {
+            const elapsed = (maxTime - timeLeft) / 60;
+            const wpm = elapsed > 0 ? Math.round((charIndex - mistakes) / 5 / elapsed) : 0;
+            const cpm = charIndex - mistakes;
+
+            wpmSpan.textContent = Math.max(0, wpm);
+            mistakesSpan.textContent = mistakes;
+            cpmSpan.textContent = Math.max(0, cpm);
+        }
+
+        // Core typing test functions
+       async function loadParagraph() {
+    showLoader();
+
+    setTimeout(async () => {
+        currentText = randomParagraph();
+        let displayText = currentText;
+
+        // Translate only if language is not English
+        const selectedLang = langSelect.value || "en";
+        if (selectedLang !== "en") {
+            const translated = await translateViaLecto([currentText], selectedLang, "en");
+            displayText = translated[0] || currentText;
+        }
+
+        // Create spans for each character
+        typingText.innerHTML = '';
+        currentChars = [];
+
+        for (let char of displayText) {
+            const span = document.createElement('span');
+            span.textContent = char;
+            typingText.appendChild(span);
+            currentChars.push(span);
+        }
+
+        if (currentChars.length > 0) currentChars[0].classList.add('active');
+
+        hideLoader();
+        resetStats();
+    }, 500);
+}
+
+
+        function resetStats() {
+            mistakesSpan.textContent = '0';
+            wpmSpan.textContent = '0';
+            cpmSpan.textContent = '0';
+        }
+
+        function startTest(inputChar) {
+            if (isTyping || finished || loader.style.display === 'flex') return;
+            
+            isTyping = true;
+            finished = false;
+            startMsg.style.display = 'none';
+            endMsg.style.display = 'none';
+            
+            handleInput(inputChar);
+            startTimer();
+        }
+
+        function handleInput(inputChar) {
+            if (finished || charIndex >= currentChars.length) return;
+            
+            const currentChar = currentChars[charIndex];
+            const expectedChar = currentChar.textContent;
+            
+            // Remove active class from current character
+            currentChar.classList.remove('active');
+            
+            // Check if input matches expected character
+            if (inputChar === expectedChar) {
+                currentChar.classList.add('correct');
+            } else {
+                currentChar.classList.add('incorrect');
+                mistakes++;
+            }
+            
+            charIndex++;
+            
+            // Set next character as active
+            if (charIndex < currentChars.length) {
+                currentChars[charIndex].classList.add('active');
+            }
+            
+            updateStats();
+            
+            // Check if test is complete
+            if (charIndex >= currentChars.length) {
+                finishTest(true);
+            }
+        }
+
+        function startTimer() {
+            if (timer) clearInterval(timer);
+            
+            timer = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimers();
+                    updateStats();
+                } else {
+                    finishTest(false);
+                }
+            }, 1000);
+        }
+
+       
+import { saveScore, loadLeaderboard } from "/firebase/Firebaseconfig.js";  // import from your file
+
+async function finishTest(completed) {
+    clearInterval(timer);
+    isTyping = false;
+    finished = true;
+
+    const finalWPM = parseInt(document.getElementById("wpm").textContent);
+
+    if (finalWPM > 0) {
+        const playerName = prompt("Typing finished! Enter your name:")?.trim();
+        if (playerName) {
+            await saveScore(playerName, finalWPM);  // now it works
+            await loadLeaderboard();
+        }
+    }
+}
+
+
+
+        function resetGame() {
+            clearInterval(timer);
+            charIndex = 0;
+            mistakes = 0;
+            isTyping = false;
+            finished = false;
+            timeLeft = maxTime;
+            
+            updateTimers();
+            loadParagraph();
+            startMsg.style.display = 'block';
+            endMsg.style.display = 'none';
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', async (e) => {
+    if (['Shift','Control','Alt','Meta','CapsLock','Tab','Escape'].includes(e.key)) return;
+    if (e.key === ' ' || e.key === 'Enter') e.preventDefault();
+
+    if (e.key.length === 1 || e.key === ' ') {
+        const inputChar = e.key === ' ' ? ' ' : e.key;
+
+        if (!isTyping && !finished) {
+            startTest(inputChar);
+        } else if (isTyping && !finished) {
+            await handleInput(inputChar); // <- async
+        }
+    }
+});
+
+        // Timer controls
+        document.querySelectorAll('.controls button[data-time]').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                document.querySelectorAll('.controls button[data-time]').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Set new time
+                const time = parseInt(button.getAttribute('data-time'));
+                const unit = button.getAttribute('data-unit');
+                
+                maxTime = unit === 'minutes' ? time * 60 : time;
+                resetGame();
+            });
+        });
+
+        resetButton.addEventListener('click', resetGame);
+        tryAgainBtn.addEventListener('click', resetGame);
+
+        // Focus on typing container
+        typingContainer.addEventListener('click', () => {
+            typingContainer.focus();
+        });
+
+        // Theme toggle
+        modeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light');
+            const isLight = document.body.classList.contains('light');
+            modeToggle.textContent = isLight ? '☀️' : '🌙';
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light');
+            modeToggle.textContent = '☀️';
+        }
+
+        // Language selector (placeholder functionality)
+      langSelect.addEventListener('change', async () => {
+    showLoader();
+    resetStats();
+    charIndex = 0;
+    mistakes = 0;
+    isTyping = false;
+    finished = false;
+    timeLeft = maxTime;
+    updateTimers();
+    
+    await loadParagraph(); // waits for translation
+});
+
+
+
+        // Initialize the application
+        function init() {
+            updateTimers();
+            loadParagraph();
+            typingContainer.focus();
+        }
+
+        // Start the application
+        init();
+    </script>
+
+    <script  type="module" src="firebase/Firebaseconfig.js"></script>
+</body>
+</html>

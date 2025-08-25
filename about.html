@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Speed Typing Test</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="leaderboard.css">
+   
+     <style>
+        :root {
+            --primary: #007acc;
+            --accent: #ffd700;
+            --accent2: #36c7fa;
+            --danger: #ff4757;
+            --surface: #1e2746;
+            --input-bg: #2a3652;
+            --input-border: #3a4662;
+            --text-secondary: #8c9db5;
+            --box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+            --primary-glow: rgba(0, 122, 204, 0.3);
+            --glass-bg: rgba(46, 54, 82, 0.8);
+            --loader: #36c7fa;
+        }
+
+        body.light {
+            --surface: #ffffff;
+            --input-bg: #f8f9fa;
+            --input-border: #e9ecef;
+            --text-secondary: #6c757d;
+            --primary: #0056b3;
+            background: #f8f9fa;
+            color: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: #191d30;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        /* Header Styles */
+        header {
+            background: #131741;
+            border-bottom: 1px solid #2a3652;
+            padding: 0;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+        }
+
+        .logo img {
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        .mode-toggle {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        /* Main Container */
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Timer Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .controls button {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 12px;
+            border: 2px solid var(--accent);
+            background: var(--surface);
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .controls button.active,
+        .controls button:hover {
+            background: var(--accent);
+            color: #191d30;
+        }
+
+        .controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Typing Container */
+        .typing-container {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .visual-timer {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-family: 'Courier New', monospace;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid var(--accent);
+        }
+
+        .start-msg, .end-msg {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        .end-msg {
+            color: var(--accent);
+            background: rgba(255, 215, 0, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .typing-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin: 2rem 0;
+            text-align: justify;
+            min-height: 150px;
+        }
+
+        .typing-text span {
+            position: relative;
+        }
+
+        .typing-text span.active {
+            background: var(--accent);
+            color: #191d30;
+            border-radius: 3px;
+            animation: blink 1s infinite;
+        }
+
+        .typing-text span.correct {
+            color: #5cf4a2;
+            background: rgba(92, 244, 162, 0.1);
+            border-radius: 3px;
+        }
+
+        .typing-text span.incorrect {
+            color: var(--danger);
+            background: rgba(255, 71, 87, 0.2);
+            border-radius: 3px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+
+        table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    color: var(--text-primary);
+}
+
+th, h1 {
+    background: var(--input-bg);
+    color: var(--accent);
+    
+}
+
+td {
+    padding: 0.75rem;
+    border-top: 1px solid var(--input-border);
+}
+
+tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.05); /* subtle stripe for dark mode */
+}
+
+
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(54, 199, 250, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(54, 199, 250, 0.3);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .try-again-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: block;
+            margin: 2rem auto 0;
+            transition: all 0.2s;
+        }
+
+        .try-again-btn:hover {
+            background: var(--accent);
+            color: #191d30;
+            transform: translateY(-2px);
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .lds-ring {
+            display: inline-block;
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+
+        .lds-ring div {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            margin: 6px;
+            border: 5px solid var(--loader);
+            border-radius: 50%;
+            animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            border-color: var(--loader) transparent transparent transparent;
+        }
+
+        .lds-ring div:nth-child(1) { animation-delay: -0.45s; }
+        .lds-ring div:nth-child(2) { animation-delay: -0.3s; }
+        .lds-ring div:nth-child(3) { animation-delay: -0.15s; }
+
+        @keyframes lds-ring {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .language-selector select {
+            background: var(--surface);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .typing-container {
+                padding: 1rem;
+            }
+            
+            .visual-timer {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding: 1rem;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        main {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+h1 {
+    text-align: center;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+p {
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}
+
+.team-section {
+    margin-top: 2rem;
+}
+
+.team-member {
+    background: rgba(54, 199, 250, 0.1);
+    padding: 1rem;
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    box-shadow: var(--box-shadow);
+}
+
+.team-member h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--accent);
+}
+
+    </style>
+  </head>
+<body>
+    <header>
+        <div class="header-inner">
+            <div class="logo">
+              <a href="/index.html"><img src="logo-png.png" alt="Typing Test"></a>
+                
+            </div>
+            <nav>
+                <a href="about.html">About</a>
+                <a href="/Leaderboard/leaderboard.html">Leaderboard</a>
+                <!-- <a href="#settings">Settings</a> -->
+                <!-- <button class="mode-toggle" id="modeToggle" title="Toggle theme">🌙</button> -->
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <h1>About Us</h1>
+        <p>Welcome to <strong>Swyft Type</strong>! Our platform was created by a passionate team of developers and designers who came together with a shared goal: to create an intuitive, engaging, and effective speed typing game. We wanted a tool that would not only be fun but also help users improve their typing speed and accuracy.</p>
+
+        <p>The Swyft Type team consists of dedicated individuals from different backgrounds, including software development, UX/UI design, and educational technology. By combining our expertise, we designed a platform that is easy to use, visually appealing, and challenging enough to help you level up your typing skills.</p>
+
+        <p>Our mission is simple: empower people of all ages to become faster and more accurate typists. We believe that typing is a fundamental skill in today's digital world, and practicing through a dynamic game can make learning more enjoyable.</p>
+
+        <div class="team-section">
+            <h2>Meet the Team</h2>
+
+            <div class="team-member">
+                <h3>Chimzigam Korie</h3>
+                <p>Lead Developer - Responsible for the core mechanics, timing, and leaderboard system.</p>
+            </div>
+
+            <div class="team-member">
+                <h3>Ethan Wai</h3>
+                <p>UI/UX Designer - Ensures the game is intuitive, responsive, and visually engaging.</p>
+            </div>
+
+            <div class="team-member">
+                <h3>Oscar Gordon</h3>
+                <p>Educational Consultant - Helps integrate meaningful typing exercises to improve speed and accuracy.</p>
+            </div>
+
+            <div class="team-member">
+                <h3>Rhys Robertson and Marck Pike</h3>
+                <p>Project Coordinators - Oversees development, ensures smooth collaboration, and maintains quality standards.</p>
+            </div>
+        </div>
+    </main>
+    
+</body>
+</html>
