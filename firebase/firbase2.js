@@ -3,13 +3,13 @@ import { getFirestore, collection, query, orderBy, limit, getDocs }
   from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD43T2lRl4EIfUsta6yFuBvofjixpoMykk",
-  authDomain: "lets-try-again-6918a.firebaseapp.com",
-  projectId: "lets-try-again-6918a",
-  storageBucket: "lets-try-again-6918a.appspot.com",
-  messagingSenderId: "7902851770",
-  appId: "1:7902851770:web:750f6ac552080d31154883",
-  measurementId: "G-0EBQR9MB5L"
+  apiKey: "AIzaSyB35nG2D5eKnf37St1dqqSxp4HxenqSlSw",
+  authDomain: "swyfte-type.firebaseapp.com",
+  projectId: "swyfte-type",
+  storageBucket: "swyfte-type.firebasestorage.app",
+  messagingSenderId: "1044279334556",
+  appId: "1:1044279334556:web:08800580ae1e7f38377f59",
+  measurementId: "G-SGLJPPPW0B"
 };
 
 const app = initializeApp(firebaseConfig);

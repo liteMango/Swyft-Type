@@ -3,15 +3,14 @@ import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https
 
 // ✅ Replace with your actual Firebase config
 const firebaseConfig = {
-apiKey: "AIzaSyAFtTW8f-AW1a8cT03naEBfZ6tBVyYSibM",
-  authDomain: "sign-2926b.firebaseapp.com",
-  databaseURL: "https://sign-2926b-default-rtdb.firebaseio.com",
-  projectId: "sign-2926b",
-  storageBucket: "sign-2926b.firebasestorage.app",
-  messagingSenderId: "619679599192",
-  appId: "1:619679599192:web:80d3021115a2f33662982d",
-  measurementId: "G-JHZX1NMTNG"
- };
+  apiKey: "AIzaSyB35nG2D5eKnf37St1dqqSxp4HxenqSlSw",
+  authDomain: "swyfte-type.firebaseapp.com",
+  projectId: "swyfte-type",
+  storageBucket: "swyfte-type.firebasestorage.app",
+  messagingSenderId: "1044279334556",
+  appId: "1:1044279334556:web:08800580ae1e7f38377f59",
+  measurementId: "G-SGLJPPPW0B"
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -75,3 +74,4 @@ document.getElementById("resetBtn").addEventListener("click", async (e) => {
 
 // 🚀 Initial load
 loadLeaderboard();
+
