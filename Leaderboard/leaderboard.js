@@ -75,3 +75,19 @@ document.getElementById("resetBtn").addEventListener("click", async (e) => {
 // 🚀 Initial load
 loadLeaderboard();
 
+
+
+import { getDocs, deleteDoc, doc } 
+  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+// Reset function
+async function resetLeaderboard() {
+  const snapshot = await getDocs(collection(db, "leaderboard"));
+  const deletes = snapshot.docs.map(d => deleteDoc(doc(db, "leaderboard", d.id)));
+  await Promise.all(deletes);
+  loadLeaderboard(); // reload after deletion
+}
+
+// Button listener
+document.getElementById("resetBtn").addEventListener("click", resetLeaderboard);
+
