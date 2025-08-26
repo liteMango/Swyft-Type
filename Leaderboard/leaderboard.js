@@ -77,9 +77,6 @@ loadLeaderboard();
 
 
 
-import { getDocs, deleteDoc, doc } 
-  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
 // Reset function
 async function resetLeaderboard() {
   const snapshot = await getDocs(collection(db, "leaderboard"));
