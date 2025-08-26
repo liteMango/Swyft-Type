@@ -72,18 +72,63 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export async function saveScore(playerName, wpm) {
+
+// Save or update score only if higher
+async function saveScore(playerName, wpm) {
   try {
-    await addDoc(collection(db, "leaderboard"), {
-      name: playerName,
-      wpm: wpm,
-      timestamp: Date.now()
-    });
-    console.log("Score saved!");
+    const q = query(
+      collection(db, "leaderboard"),
+      where("name", "==", playerName)
+    );
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      // ✅ Name exists → check existing score
+      const existingDoc = snapshot.docs[0];
+      const data = existingDoc.data();
+
+      if (wpm > data.wpm) {
+        const docRef = doc(db, "leaderboard", existingDoc.id);
+
+        await updateDoc(docRef, {
+          wpm: wpm, // update only if higher
+          timestamp: Date.now()
+        });
+
+        console.log("Score updated with higher WPM!");
+      } else {
+        console.log("New WPM is not higher — keeping old score (no timestamp change).");
+      }
+    } else {
+      // ➕ Name not found → add new entry
+      await addDoc(collection(db, "leaderboard"), {
+        name: playerName,
+        wpm: wpm,
+        timestamp: Date.now()
+      });
+
+      console.log("New score added!");
+    }
   } catch (e) {
-    console.error("Error saving score: ", e);
+    console.error("Error saving/updating score: ", e);
   }
 }
+
+
+
+
+// export async function saveScore(playerName, wpm) {
+//   try {
+//     await addDoc(collection(db, "leaderboard"), {
+//       name: playerName,
+//       wpm: wpm,
+//       timestamp: Date.now()
+//     });
+//     console.log("Score saved!");
+//   } catch (e) {
+//     console.error("Error saving score: ", e);
+//   }
+// }
 
 // export async function loadLeaderboard() {
 //   const q = query(collection(db, "leaderboard"), orderBy("wpm", "desc"), limit(10));
