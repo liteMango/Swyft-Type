@@ -57,7 +57,7 @@
 
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs } 
+import { getFirestore, doc ,collection, addDoc, query, orderBy, limit, getDocs, onSnapshot } 
   from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -72,63 +72,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-
-// Save or update score only if higher
-async function saveScore(playerName, wpm) {
+export async function saveScore(playerName, wpm) {
   try {
-    const q = query(
-      collection(db, "leaderboard"),
-      where("name", "==", playerName)
-    );
-    const snapshot = await getDocs(q);
-
-    if (!snapshot.empty) {
-      // ✅ Name exists → check existing score
-      const existingDoc = snapshot.docs[0];
-      const data = existingDoc.data();
-
-      if (wpm > data.wpm) {
-        const docRef = doc(db, "leaderboard", existingDoc.id);
-
-        await updateDoc(docRef, {
-          wpm: wpm, // update only if higher
-          timestamp: Date.now()
-        });
-
-        console.log("Score updated with higher WPM!");
-      } else {
-        console.log("New WPM is not higher — keeping old score (no timestamp change).");
-      }
-    } else {
-      // ➕ Name not found → add new entry
-      await addDoc(collection(db, "leaderboard"), {
-        name: playerName,
-        wpm: wpm,
-        timestamp: Date.now()
-      });
-
-      console.log("New score added!");
-    }
+    await addDoc(collection(db, "leaderboard"), {
+      name: playerName,
+      wpm: wpm,
+      timestamp: Date.now()
+    });
+    console.log("Score saved!");
   } catch (e) {
-    console.error("Error saving/updating score: ", e);
+    console.error("Error saving score: ", e);
   }
 }
-
-
-
-
-// export async function saveScore(playerName, wpm) {
-//   try {
-//     await addDoc(collection(db, "leaderboard"), {
-//       name: playerName,
-//       wpm: wpm,
-//       timestamp: Date.now()
-//     });
-//     console.log("Score saved!");
-//   } catch (e) {
-//     console.error("Error saving score: ", e);
-//   }
-// }
 
 // export async function loadLeaderboard() {
 //   const q = query(collection(db, "leaderboard"), orderBy("wpm", "desc"), limit(10));
@@ -166,6 +121,32 @@ export async function loadLeaderboard() {
     });
   }
 }
+
+
+const counterRef = doc(db, "counters", "hits");
+
+// Increment total hits
+async function incrementHits() {
+  const snap = await getDoc(counterRef);
+  if (snap.exists()) {
+    await updateDoc(counterRef, {
+      totalHits: snap.data().totalHits + 1
+    });
+  } else {
+    await setDoc(counterRef, { totalHits: 1 });
+  }
+}
+
+// Listen in realtime for updates
+onSnapshot(counterRef, (docSnap) => {
+  if (docSnap.exists()) {
+    document.getElementById("hitCount").textContent = docSnap.data().totalHits;
+  }
+});
+
+// Call when page loads
+incrementHits();
+
 
 
 

@@ -1,0 +1,52 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Realtime Hit Counter</title>
+</head>
+<body>
+  <h1>Welcome to My Site</h1>
+  <p>Total visits: <span id="hitCount">0</span></p>
+
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc, setDoc, onSnapshot } 
+  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyB35nG2D5eKnf37St1dqqSxp4HxenqSlSw",
+  authDomain: "swyfte-type.firebaseapp.com",
+  projectId: "swyfte-type",
+  storageBucket: "swyfte-type.firebasestorage.app",
+  messagingSenderId: "1044279334556",
+  appId: "1:1044279334556:web:08800580ae1e7f38377f59",
+  measurementId: "G-SGLJPPPW0B"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+// Reference to the counter document
+const counterRef = doc(db, "counters", "hits");
+
+// Increment total hits
+async function incrementHits() {
+  const snap = await getDoc(counterRef);
+  if (snap.exists()) {
+    await updateDoc(counterRef, {
+      totalHits: snap.data().totalHits + 1
+    });
+  } else {
+    await setDoc(counterRef, { totalHits: 1 });
+  }
+}
+
+// Listen in realtime for updates
+onSnapshot(counterRef, (docSnap) => {
+  if (docSnap.exists()) {
+    document.getElementById("hitCount").textContent = docSnap.data().totalHits;
+  }
+});
+
+// Call when page loads
+incrementHits();
+</script> -->

@@ -408,7 +408,7 @@
             </div>
             
             <button class="try-again-btn" id="tryAgainBtn">Try Again</button>
-            
+            <p>Total visits: <span id="hitCount">0</span></p>
             <div class="loader" id="loader">
                 <div class="lds-ring">
                     <div></div>
@@ -424,15 +424,15 @@
   <div class="footer-container">
     <div class="footer-top">
       <div class="footer-logo">
-        <a href="index.html">⚡ SpeedType</a>
+        <a href="index.html">⚡ Swyft-Type</a>
       </div>
       <nav class="footer-nav">
         <a href="about.html">About Us</a>
-        <a href="leaderboard.html">Leaderboard</a>
-        <a href="contact.html">Contact</a>
+        <a href="/Leaderboard/leaderboard.html">Leaderboard</a>
+        <!-- <a href="contact.html">Contact</a> -->
       </nav>
     </div>
-    <p class="footer-copy">© 2025 SpeedType. All rights reserved.</p>
+    <p class="footer-copy">© 2025 Swyft-Type. All rights reserved.</p>
   </div>
 
   <!-- Social icons moved outside container -->
@@ -465,17 +465,6 @@
 }
 
 
-/* 🔹 Media Query for smaller screens */
-@media (max-width: 600px) {
-  .footer-icons {
-    flex-direction: column;  /* stack vertically on small screens */
-    gap: 0.8rem;
-  }
-
-  .footer-icons .icon {
-    font-size: 24px; /* slightly smaller for mobile */
-  }
-}
   .footer {
     background: #111;
     color: #eee;
