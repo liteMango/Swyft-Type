@@ -127,7 +127,7 @@ const counterRef = doc(db, "counters", "hits");
 
 // Increment total hits
 async function incrementHits() {
-  const snap = await getDoc(counterRef);
+  const snap = await getDocs(counterRef);
   if (snap.exists()) {
     await updateDoc(counterRef, {
       totalHits: snap.data().totalHits + 1
